@@ -38,8 +38,12 @@ namespace BikeRentalClient
         }
         private void DeleteBike_Click(object sender, RoutedEventArgs e)
         {
-            LB_Bikes.Items.Remove(LB_Bikes.SelectedItem);
-            Save();
+            MessageBoxResult result = MessageBox.Show("Biztos, hogy törölni szeretnéd?", "Kerékpár törlése", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+            if (result == MessageBoxResult.Yes)
+            {
+                LB_Bikes.Items.Remove(LB_Bikes.SelectedItem);
+                Save();
+            }            
         }
         private void EditBike_Click(object sender, RoutedEventArgs e)
         {
@@ -51,6 +55,7 @@ namespace BikeRentalClient
                 int index = LB_Bikes.SelectedIndex;
                 LB_Bikes.Items.RemoveAt(index);
                 LB_Bikes.Items.Insert(index, window.Bike);
+                LB_Bikes.SelectedItem = window.Bike;
                 Save();
             }                     
         }
@@ -81,11 +86,26 @@ namespace BikeRentalClient
             }
             File.WriteAllLines(BikeDBPath, op);
         }
+               
+         private void LB_Bikes_SelectionChanged(object sender, SelectionChangedEventArgs e)
+         {
+             BTN_EditBike.IsEnabled = LB_Bikes.SelectedItem != null;
+             BTN_DeleteBike.IsEnabled = LB_Bikes.SelectedItem != null;
+         }
 
-        private void LB_Bike_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void LB_Bikes_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            BTN_EditBike.IsEnabled = LB_Bikes.SelectedItem != null;
-            BTN_DeleteBike.IsEnabled = LB_Bikes.SelectedItem !=null;
+            EditBike_Click(sender, e);
         }
+
+        private void LB_Bikes_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter: EditBike_Click(sender, e); break;
+                case Key.Delete: DeleteBike_Click(sender, e); break;
+            }
+
+        }        
     }
 }

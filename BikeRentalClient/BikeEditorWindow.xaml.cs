@@ -27,9 +27,9 @@ namespace BikeRentalClient
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             Bike = new Bike();
-            Bike.Name = TB_Name.Text;
-            Bike.Brand = TB_Brand.Text;
-            Bike.Type = TB_Type.Text;
+            Bike.Name = TB_Name.Text.Trim();
+            Bike.Brand = TB_Brand.Text.Trim();
+            Bike.Type = TB_Type.Text.Trim();
             Bike.Manufactured = DP_Manufactured.SelectedDate;
             DialogResult = true;
             Close();
@@ -48,9 +48,48 @@ namespace BikeRentalClient
 
         private void Property_Changed(object sender, EventArgs e)
         {
-            BTN_Save.IsEnabled = !string.IsNullOrWhiteSpace(TB_Name.Text) && !string.IsNullOrWhiteSpace(TB_Brand.Text) && !string.IsNullOrWhiteSpace(TB_Type.Text) && DP_Manufactured.SelectedDate !=null;
+            BTN_Save.IsEnabled = FormIsValid();
+                
         }
 
-        
+        private bool FormIsValid()
+        {
+            try
+            {
+                return !string.IsNullOrWhiteSpace(TB_Name.Text) && !string.IsNullOrWhiteSpace(TB_Brand.Text) && !string.IsNullOrWhiteSpace(TB_Type.Text) && DateTime.Parse(DP_Manufactured.Text) != null;
+            }
+            catch (Exception)
+            {
+                return false;
+            }             
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Escape: Close(); break;
+                case Key.Enter: 
+                    if (FormIsValid())
+                    {
+                        Save_Click(sender, e); 
+                        e.Handled = true; 
+                    }
+                    break;
+            }
+        }
+
+        private void DP_Release_KeyDown(object sender, KeyEventArgs e)
+        {
+            string asd = "valami";
+        }
+
+        private void TB_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if(sender is TextBox tb)
+            {
+                tb.CaretIndex = tb.Text.Length;
+            }            
+        }
     }
 }
